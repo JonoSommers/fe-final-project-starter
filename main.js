@@ -15,6 +15,7 @@ const showingText = document.querySelector("#showing-text")
 const merchantForm = document.querySelector("#new-merchant-form")
 const newMerchantName = document.querySelector("#new-merchant-name")
 const submitMerchantButton = document.querySelector("#submit-merchant")
+const merchantsHeading = document.querySelector("#showing-text")
 
 // Event Listeners
 merchantsView.addEventListener('click', (event) => {
@@ -36,6 +37,7 @@ submitMerchantButton.addEventListener('click', (event) => {
 //Global variables
 let merchants;
 let items;
+let coupons;
 
 //Page load data fetching
 Promise.all([fetchData('merchants'), fetchData('items')])
@@ -139,20 +141,24 @@ function submitMerchant(event) {
 
 // Functions that control the view 
 function showMerchantsView() {
+  show([merchantsHeading])
   showingText.innerText = "All Merchants"
   addRemoveActiveNav(merchantsNavButton, itemsNavButton)
   addNewButton.dataset.state = 'merchant'
   show([merchantsView, addNewButton])
   hide([itemsView])
+  couponsView.innerHTML = ''
   displayMerchants(merchants)
 }
 
 function showItemsView() {
+  show([showingText])
   showingText.innerText = "All Items"
   addRemoveActiveNav(itemsNavButton, merchantsNavButton)
   addNewButton.dataset.state = 'item'
   show([itemsView])
   hide([merchantsView, merchantForm, addNewButton, couponsView])
+  couponsView.innerHTML = ''
   displayItems(items)
 }
 
@@ -172,7 +178,7 @@ function displayItems(items) {
   firstHundredItems.forEach(item => {
     let merchant = findMerchant(item.attributes.merchant_id).attributes.name
     itemsView.innerHTML += `
-     <article class="item" id="item-${item.id}">
+    <article class="item" id="item-${item.id}">
           <img src="" alt="">
           <h2>${item.attributes.name}</h2>
           <p>${item.attributes.description}</p>
@@ -236,7 +242,7 @@ function getMerchantCoupons(event) {
   let merchantId = event.target.closest("article").id.split('-')[1]
   console.log("Merchant ID:", merchantId)
 
-  fetchData(`merchants/${merchantId}`)
+  fetchData(`merchants/${merchantId}/coupons`)
   .then(couponData => {
     console.log("Coupon data from fetch:", couponData)
     displayMerchantCoupons(couponData);
@@ -244,12 +250,24 @@ function getMerchantCoupons(event) {
 }
 
 function displayMerchantCoupons(coupons) {
+  console.log('coupons: ', coupons)
   show([couponsView])
-  hide([merchantsView, itemsView])
-
-  couponsView.innerHTML = `
-    <p>Coupon data will go here.</p>
-  `
+  hide([merchantsView, itemsView, addNewButton])
+  couponsView.innerHTML = ''
+  coupons.data.forEach(coupon => {
+    let merchant = findMerchant(coupon.attributes.merchant_id).attributes.name
+    showingText.innerHTML = `Showing all of Merchant ${coupon.attributes.merchant_id}'s coupons`
+    couponsView.innerHTML += `
+    <article class="coupon" id="coupon-${coupon.id}">
+          <img src="" alt="">
+          <h2>${coupon.attributes.name}</h2>
+          <p>code: ${coupon.attributes.code}</p>
+          <p>$${coupon.attributes.dollar_off} off</p>
+          <p>status: ${coupon.attributes.status}</p>
+          <p class="merchant-name-in-item">Merchant: ${merchant}</p>
+        </article>
+    `
+  })
 }
 
 //Helper Functions
