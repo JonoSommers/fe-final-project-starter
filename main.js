@@ -256,7 +256,7 @@ function displayMerchantCoupons(coupons) {
   couponsView.innerHTML = ''
   coupons.data.forEach(coupon => {
     let merchant = findMerchant(coupon.attributes.merchant_id).attributes.name
-    showingText.innerHTML = `Showing all of Merchant ${coupon.attributes.merchant_id}'s coupons`
+    showingText.innerHTML = `All of Merchant ${coupon.attributes.merchant_id}'s coupons`
     couponsView.innerHTML += `
     <article class="coupon" id="coupon-${coupon.id}">
           <img src="" alt="">
