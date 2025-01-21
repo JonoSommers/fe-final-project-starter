@@ -245,28 +245,33 @@ function getMerchantCoupons(event) {
   fetchData(`merchants/${merchantId}/coupons`)
   .then(couponData => {
     console.log("Coupon data from fetch:", couponData)
-    displayMerchantCoupons(couponData);
+    displayMerchantCoupons(couponData, merchantId);
   })
 }
 
-function displayMerchantCoupons(coupons) {
+function displayMerchantCoupons(coupons, merchantId) {
   show([couponsView])
   hide([merchantsView, itemsView, addNewButton])
+  showingText.innerHTML = `All of Merchant ${merchantId}'s coupons`
   couponsView.innerHTML = ''
-  coupons.data.forEach(coupon => {
-    let merchant = findMerchant(coupon.attributes.merchant_id).attributes.name
-    showingText.innerHTML = `All of Merchant ${coupon.attributes.merchant_id}'s coupons`
-    couponsView.innerHTML += `
-    <article class="coupon" id="coupon-${coupon.id}">
-          <img src="" alt="">
-          <h2>${coupon.attributes.name}</h2>
-          <p>code: ${coupon.attributes.code}</p>
-          <p>$${coupon.attributes.dollar_off} off</p>
-          <p>status: ${coupon.attributes.status}</p>
-          <p class="merchant-name-in-coupon">Merchant: ${merchant}</p>
-        </article>
-    `
-  })
+  if (coupons.data.length === 0) {
+    couponsView.innerHTML += 'There are no coupons for this merchant.'
+  }
+  else {
+    coupons.data.forEach(coupon => {
+      let merchant = findMerchant(coupon.attributes.merchant_id).attributes.name
+      couponsView.innerHTML += `
+      <article class="coupon" id="coupon-${coupon.id}">
+            <img src="" alt="">
+            <h2>${coupon.attributes.name}</h2>
+            <p>code: ${coupon.attributes.code}</p>
+            <p>$${coupon.attributes.dollar_off} off</p>
+            <p>status: ${coupon.attributes.status}</p>
+            <p class="merchant-name-in-coupon">Merchant: ${merchant}</p>
+          </article>
+      `
+    })
+  }
 }
 
 //Helper Functions
