@@ -250,7 +250,6 @@ function getMerchantCoupons(event) {
 }
 
 function displayMerchantCoupons(coupons) {
-  console.log('coupons: ', coupons)
   show([couponsView])
   hide([merchantsView, itemsView, addNewButton])
   couponsView.innerHTML = ''
@@ -264,7 +263,7 @@ function displayMerchantCoupons(coupons) {
           <p>code: ${coupon.attributes.code}</p>
           <p>$${coupon.attributes.dollar_off} off</p>
           <p>status: ${coupon.attributes.status}</p>
-          <p class="merchant-name-in-item">Merchant: ${merchant}</p>
+          <p class="merchant-name-in-coupon">Merchant: ${merchant}</p>
         </article>
     `
   })
